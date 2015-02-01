@@ -1,7 +1,7 @@
 
 $(function() {
   $.getJSON('/showChart1', function(data) {
-    data.chart = {renderTo: "chart1", type: 'bar', height: 500};
+    data.chart = {renderTo: "chart1", type: 'pie', height: 500};
     data.plotOptions = {series: {colorByPoint: true}};
     $("#chart1").highcharts(data);
   });

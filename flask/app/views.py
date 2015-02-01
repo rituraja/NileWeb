@@ -32,22 +32,17 @@ def showChart1():
     hbase_table = connection.table('productCounts')
     data = hbase_table.scan()
     datalist = []
-    xAxislist = []
     for key, value in data:
-        datalist.append(int(value['f:c1']))
-        xAxislist.append(key)
+        datalist.append([key,int(value['f:c1'])])
     
     dataChart1 = {
-        'series' : [{"name": 'categories', "data": datalist}],
-        'title' : {"text": 'Category Distribution'},
-        'xAxis' : {"categories": xAxislist},
-        'yAxis' : {"title": {"text": 'Product Count'}},
+        'series' : [{"type": 'pie',"name": 'categories', "data": datalist}],
+        'title' : {"text": 'Product Distribution by Category'},
     }
     return jsonify(dataChart1)
 
 @app.route('/_showTable')
 def showTable():
-    # data = {'ritu', 'raja','rishi','rahul' }
     connection = happybase.Connection('54.183.25.144')
     hbase_table = connection.table('productCounts')
     data = hbase_table.scan()
@@ -77,7 +72,7 @@ def api_scd(day = '2014-12-28'):
         'series' : [{"name": day , "data": datalist}],
         'title' : {"text": 'Day Sales'},
         'xAxis' : {"categories": xAxislist},
-        'yAxis' : {"title": {"text": 'Product Count'}},
+        'yAxis' : {"min" : 1000, "title": {"text": 'Product Count'}},
     }
 
     return jsonify(dataChart)
@@ -97,7 +92,7 @@ def api_scm(month = '2014_12'):
         'series' : [{"name": month , "data": datalist}],
         'title' : {"text": 'Monthly Sales'},
         'xAxis' : {"categories": xAxislist},
-        'yAxis' : {"title": {"text": 'Product Count'}},
+        'yAxis' : {"min" : 30000 , "title": {"text": 'Product Count'}},
     }
 
     return jsonify(dataChart)
