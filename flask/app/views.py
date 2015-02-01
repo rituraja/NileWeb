@@ -2,13 +2,20 @@ from app import app
 from flask import render_template, jsonify
 import happybase
 
+project = {'name':'Nile',
+    'desc': 'Sales Analytics' 
+}
+
 @app.route('/')
 @app.route('/index')
-def index():
-    project = {'name':'Nile',
-                'desc': 'Sales Analytics' 
-    }
-    return render_template('index.html',
+def batch():
+    return render_template('batch.html',
+        title='Insight Data Engineering Project',
+        project = project)
+
+@app.route('/realtime')
+def realtime():
+    return render_template('realtime.html',
         title='Insight Data Engineering Project',
         project = project)
 
@@ -55,19 +62,45 @@ def api_ProCat():
 
     return dump(data)
 
-@app.route("/api/getSalesPerCategory_daily/<value>")
-def api_scd(value = None):
+@app.route("/api/getSalesPerCategory_daily/<day>")
+def api_scd(day = '2014-12-28'):
     connection = happybase.Connection('54.183.25.144')
     hbase_table = connection.table('salesCatPerDay')
-    data = hbase_table.scan()
-    return dump(data)
+    data = hbase_table.scan(row_prefix=day)
+    datalist = []
+    xAxislist = []
+    for key, value in data:
+        datalist.append(int(value['f:c1']))
+        xAxislist.append(key[11:])
+    
+    dataChart = {
+        'series' : [{"name": day , "data": datalist}],
+        'title' : {"text": 'Day Sales'},
+        'xAxis' : {"categories": xAxislist},
+        'yAxis' : {"title": {"text": 'Product Count'}},
+    }
 
-@app.route("/api/getSalesPerCategory_monthly/<value>")
-def api_scm(value = None):
+    return jsonify(dataChart)
+
+@app.route("/api/getSalesPerCategory_monthly/<month>")
+def api_scm(month = '2014_12'):
     connection = happybase.Connection('54.183.25.144')
     hbase_table = connection.table('salesCatPerMth')
-    data = hbase_table.scan()
-    return dump(data)
+    data = hbase_table.scan(row_prefix=month)
+    datalist = []
+    xAxislist = []
+    for key, value in data:
+        datalist.append(int(value['f:c1']))
+        xAxislist.append(key[8:])
+    
+    dataChart = {
+        'series' : [{"name": month , "data": datalist}],
+        'title' : {"text": 'Monthly Sales'},
+        'xAxis' : {"categories": xAxislist},
+        'yAxis' : {"title": {"text": 'Product Count'}},
+    }
+
+    return jsonify(dataChart)
 
 @app.route("/api/getProductsPerRegion_monthly/<value>")
 def api_prm(value = None):
@@ -76,7 +109,7 @@ def api_prm(value = None):
     data = hbase_table.scan()
     return dump(data)
 
-def dump(recordset):
+def dump1(recordset):
     str = ''
     for key , data in recordset:
         str = str +  key + ' - ' + data['f:c1'] + '<BR>'
