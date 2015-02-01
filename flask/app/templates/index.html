@@ -1,19 +1,73 @@
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-
-<!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <title>{{ title }} - Insight Project</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="../../favicon.ico">
+
+    <link href="{{ url_for('static', filename='dist/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='dist/css/dashboard.css') }}" rel="stylesheet">
+
+    <title>{{ project.name }} {{ project.desc }}</title>
   </head>
+
   <body>
-      <h1>{{ project.name }}</h1>
-      <h1>{{ project.desc }}</h1>
-      
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">{{ project.name }} {{ project.desc }}</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-1 col-md-1 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Batch <span class="sr-only">(current)</span></a></li>
+            <li><a href="#">Real-time</a></li>
+          </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 main">
+          <h1 class="page-header">Dashboard</h1>
+
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-2 placeholder">
+              <img data-src="holder.js/100x100/auto/sky/text:500 MB" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4># Categories</h4>
+            </div>
+            <div class="col-xs-6 col-sm-2 placeholder">
+              <img data-src="holder.js/100x100/auto/vine/text:~1 GB" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4># Products</h4>
+            </div>
+            <div class="col-xs-6 col-sm-2 placeholder">
+              <img data-src="holder.js/100x100/auto/lava/text:~ 100 GB" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4># Sales Orders</h4>
+            </div>
+          </div>  
+
+          <div id="chart1">
+            Loading...
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='dist/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/docs.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery-1.11.2.min.js') }}"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script type=text/javascript>
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
   </body>
 </html>
