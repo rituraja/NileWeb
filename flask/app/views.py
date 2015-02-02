@@ -26,8 +26,8 @@ def hbase_test():
     key6 = my_table.row('Romance')
     return key6['f:c1']
 
-@app.route('/showChart1')
-def showChart1():
+@app.route("/api/getProductsPerCategory")
+def api_ProCat():
     connection = happybase.Connection('54.183.25.144')
     hbase_table = connection.table('productCounts')
     data = hbase_table.scan()
@@ -40,22 +40,6 @@ def showChart1():
         'title' : {"text": 'Product Distribution by Category'},
     }
     return jsonify(dataChart1)
-
-@app.route('/_showTable')
-def showTable():
-    connection = happybase.Connection('54.183.25.144')
-    hbase_table = connection.table('productCounts')
-    data = hbase_table.scan()
-
-    return render_template('cate_prod.html' , data = data )
-
-@app.route("/api/getProductsPerCategory")
-def api_ProCat():
-    connection = happybase.Connection('54.183.25.144')
-    hbase_table = connection.table('productCounts')
-    data = hbase_table.scan()
-
-    return dump(data)
 
 @app.route("/api/getSalesPerCategory_daily/<day>")
 def api_scd(day = '2014-12-28'):
@@ -102,10 +86,49 @@ def api_prm(value = None):
     connection = happybase.Connection('54.183.25.144')
     hbase_table = connection.table('salesPerZipcode')
     data = hbase_table.scan()
-    return dump(data)
+    datalist = []
+    xAxislist = []
+    for key, value in data:
+        datalist.append(int(value['f:c1']))
+        xAxislist.append(key[8:])
+    
+    dataChart = {
+        'series' : [{"name": month , "data": datalist}],
+        'title' : {"text": 'Monthly Sales'},
+        'xAxis' : {"categories": xAxislist},
+        'yAxis' : {"min" : 30000 , "title": {"text": 'Product Count'}},
+    }
 
-def dump1(recordset):
-    str = ''
-    for key , data in recordset:
-        str = str +  key + ' - ' + data['f:c1'] + '<BR>'
-    return str
+    return jsonify(dataChart)
+
+@app.route("/api/getDateTotalRevenue")
+def api_dtr(value = None):
+    connection = happybase.Connection('54.183.25.144')
+    hbase_table = connection.table('date_total_revenue_hbase')
+    data1 = hbase_table.scan(row_prefix='2014-11')
+    datalist1 = []
+    xAxislist = []
+    for key, value in data1:
+        datalist1.append(int(value['f:c1']))
+        xAxislist.append(key[7:])
+    
+    data2 = hbase_table.scan(row_prefix='2014-12')
+    datalist2 = []
+    for key, value in data2:
+        datalist2.append(int(value['f:c1']))
+        
+    
+    dataChart = {
+        'series' : [{"name": "2014 Nov" , "data": datalist1},
+                    {"name": "2014 Dec" , "data": datalist2}],
+        'title' : {"text": 'Monthly Sales'},
+        'xAxis' : {"categories": xAxislist,
+        'labels': {
+                'rotation': 45
+            }},
+        'yAxis' : {"min" : 10000 , "title": {"text": 'Product Count'}},
+    }
+
+    return jsonify(dataChart)
+
+
