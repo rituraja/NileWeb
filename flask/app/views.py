@@ -22,14 +22,14 @@ def realtime():
 @app.route("/hbase/")
 def hbase_test():
     connection = happybase.Connection('54.183.25.144')
-    my_table = connection.table('productCounts')
+    my_table = connection.table('cat_pcount')
     key6 = my_table.row('Romance')
     return key6['f:c1']
 
 @app.route("/api/getProductsPerCategory")
 def api_ProCat():
     connection = happybase.Connection('54.183.25.144')
-    hbase_table = connection.table('productCounts')
+    hbase_table = connection.table('cat_pcount')
     data = hbase_table.scan()
     datalist = []
     for key, value in data:
@@ -44,7 +44,7 @@ def api_ProCat():
 @app.route("/api/getSalesPerCategory_daily/<day>")
 def api_scd(day = '2014-12-28'):
     connection = happybase.Connection('54.183.25.144')
-    hbase_table = connection.table('salesCatPerDay')
+    hbase_table = connection.table('cat_day_vol')
     data = hbase_table.scan(row_prefix=day)
     datalist = []
     xAxislist = []
@@ -62,9 +62,9 @@ def api_scd(day = '2014-12-28'):
     return jsonify(dataChart)
 
 @app.route("/api/getSalesPerCategory_monthly/<month>")
-def api_scm(month = '2014_12'):
+def api_scm(month = '2014-12'):
     connection = happybase.Connection('54.183.25.144')
-    hbase_table = connection.table('salesCatPerMth')
+    hbase_table = connection.table('cat_mth_vol')
     data = hbase_table.scan(row_prefix=month)
     datalist = []
     xAxislist = []
@@ -104,7 +104,7 @@ def api_prm(value = None):
 @app.route("/api/getDateTotalRevenue")
 def api_dtr(value = None):
     connection = happybase.Connection('54.183.25.144')
-    hbase_table = connection.table('date_total_revenue_hbase')
+    hbase_table = connection.table('day_vol_revenue')
     data1 = hbase_table.scan(row_prefix='2014-11')
     datalist1 = []
     xAxislist = []

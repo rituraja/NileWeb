@@ -12,7 +12,7 @@ $(function() {
     $("#chart2").highcharts(data);
   });
 
-  $.getJSON('/api/getSalesPerCategory_monthly/2014_12', function(data) {
+  $.getJSON('/api/getSalesPerCategory_monthly/2014-12', function(data) {
     data.chart = {renderTo: "chart3", type: 'bar', height: 500};
     data.plotOptions = {series: {colorByPoint: true}};
     $("#chart3").highcharts(data);
